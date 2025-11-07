@@ -1,7 +1,20 @@
 // Language switching functionality
+const ABOUT_FALLBACK = {
+    en: [
+        "Jr. Game & Narrative Designer focused on creating meaningful player experiences through story, structure, and emotion. I approach design as a dialogue between gameplay and narrative — where every mechanic, choice, and detail serves the story. My work explores how interactive systems can express feeling, consequence, and human complexity.",
+        "I've worked on small independent projects exploring different genres — from mystery and suspense to romance — always with the goal of making players feel something real. My work and collaborations explore emotion, player choice, craft characters that feel alive and world-building through small but meaningful projects developed with engines like Unity, Godot, and Twine. I'm constantly learning, experimenting, and refining my craft, creating experiences where story and gameplay truly connect."
+    ],
+    es: [
+        "Jr. Game & Narrative Designer enfocado en crear experiencias significativas para los jugadores a través de la historia, la estructura y la emoción. Abordo el diseño como un diálogo entre el gameplay y la narrativa — donde cada mecánica, decisión y detalle sirve a la historia. Mi trabajo explora cómo los sistemas interactivos pueden expresar sentimientos, consecuencias y la complejidad humana.",
+        "He trabajado en pequeños proyectos independientes explorando diferentes géneros — del misterio y el suspense al romance — siempre con el objetivo de hacer sentir algo real a quien juega. Mi trabajo y colaboraciones exploran la emoción, las decisiones del jugador, crear personajes que se sienten vivos y la construcción de mundos a través de proyectos pequeños pero significativos desarrollados con motores como Unity, Godot y Twine. Estoy constantemente aprendiendo, experimentando y refinando mi oficio, creando experiencias donde la historia y el gameplay realmente se conectan."
+    ]
+};
+
 class LanguageManager {
     constructor() {
         this.currentLang = 'en';
+        this.projectDataCache = {};
+        this.aboutContent = null;
         this.init();
     }
 
@@ -49,52 +62,94 @@ class LanguageManager {
 
     async loadExternalContent(lang) {
         try {
-            // Load About section content
-            const aboutResponse = await fetch(`content/about-${lang}.txt`, { cache: 'no-store' });
-            if (aboutResponse.ok) {
-                const text = await aboutResponse.text();
-                const paragraphs = text.split('\n\n');
-                
-                const paragraph1 = document.getElementById('about-paragraph-1');
-                const paragraph2 = document.getElementById('about-paragraph-2');
-                
-                if (paragraph1 && paragraphs[0]) {
-                    paragraph1.textContent = paragraphs[0];
-                }
-                if (paragraph2 && paragraphs[1]) {
-                    paragraph2.textContent = paragraphs[1];
-                }
-            }
-
-            // Load project descriptions
-            const projectDescriptions = document.querySelectorAll('.project-description[data-project]');
-            for (const desc of projectDescriptions) {
-                const projectId = desc.getAttribute('data-project');
-                try {
-                    const projectResponse = await fetch(`content/${projectId}-${lang}.txt`, { cache: 'no-store' });
-                    if (projectResponse.ok) {
-                        const projectText = await projectResponse.text();
-                        desc.textContent = projectText;
-                    }
-                } catch (projectError) {
-                    console.warn(`Failed to load content for project ${projectId}:`, projectError);
-                }
-            }
+            await this.populateAboutSection(lang);
+            await this.populateProjectCards(lang);
         } catch (error) {
             console.warn('Failed to load external content:', error);
-            // Fallback to inline content if available
-            const paragraph1 = document.getElementById('about-paragraph-1');
-            const paragraph2 = document.getElementById('about-paragraph-2');
-            if (paragraph1 && paragraph1.textContent === 'Loading...') {
-                paragraph1.textContent = lang === 'en' 
-                    ? "Jr. Game & Narrative Designer focused on creating meaningful player experiences through story, structure, and emotion."
-                    : "Jr. Game & Narrative Designer enfocado en crear experiencias significativas para los jugadores a través de la historia, la estructura y la emoción.";
+            this.applyAboutFallback(lang);
+        }
+    }
+    async getProjectData(projectId) {
+        if (this.projectDataCache[projectId]) {
+            return this.projectDataCache[projectId];
+        }
+
+        try {
+            const response = await fetch(`content/${projectId}.json`, { cache: 'no-store' });
+            if (response.ok) {
+                const data = await response.json();
+                this.projectDataCache[projectId] = data;
+                return data;
             }
-            if (paragraph2 && paragraph2.textContent === 'Loading...') {
-                paragraph2.textContent = lang === 'en' 
-                    ? "I've worked on small independent projects exploring different genres — always with the goal of making players feel something real."
-                    : "He trabajado en pequeños proyectos independientes explorando diferentes géneros — siempre con el objetivo de hacer sentir algo real a quien juega.";
+        } catch (error) {
+            console.warn(`Failed to load content for project ${projectId}:`, error);
+        }
+
+        return null;
+    }
+
+    async populateProjectCards(lang) {
+        const projectCards = document.querySelectorAll('.project-card[data-project]');
+
+        for (const card of projectCards) {
+            const projectId = card.getAttribute('data-project');
+            const projectInfo = await this.getProjectData(projectId);
+
+            if (!projectInfo) continue;
+
+            const titleElement = card.querySelector('.project-title');
+            const genreElement = card.querySelector('.project-genre');
+            const descriptionElement = card.querySelector('.project-description');
+
+            if (titleElement && projectInfo.title?.[lang]) {
+                titleElement.textContent = projectInfo.title[lang];
             }
+            if (genreElement && projectInfo.genre?.[lang]) {
+                genreElement.textContent = projectInfo.genre[lang];
+            }
+            if (descriptionElement && projectInfo.description?.[lang]) {
+                descriptionElement.textContent = projectInfo.description[lang];
+            }
+        }
+    }
+
+    async populateAboutSection(lang) {
+        if (!this.aboutContent) {
+            try {
+                const aboutResponse = await fetch('content/about.json', { cache: 'no-store' });
+                if (aboutResponse.ok) {
+                    this.aboutContent = await aboutResponse.json();
+                }
+            } catch (error) {
+                console.warn('Failed to load about content:', error);
+            }
+        }
+
+        const paragraphs = this.aboutContent?.paragraphs?.[lang];
+        if (paragraphs && paragraphs.length) {
+            this.setAboutParagraphs(paragraphs);
+        } else {
+            this.applyAboutFallback(lang);
+        }
+    }
+
+    setAboutParagraphs(paragraphs = []) {
+        const [first = '', second = ''] = paragraphs;
+        const paragraph1 = document.getElementById('about-paragraph-1');
+        const paragraph2 = document.getElementById('about-paragraph-2');
+
+        if (paragraph1 && first) {
+            paragraph1.textContent = first;
+        }
+        if (paragraph2 && second) {
+            paragraph2.textContent = second;
+        }
+    }
+
+    applyAboutFallback(lang) {
+        const fallbackParagraphs = ABOUT_FALLBACK[lang];
+        if (fallbackParagraphs) {
+            this.setAboutParagraphs(fallbackParagraphs);
         }
     }
 }
