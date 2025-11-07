@@ -50,7 +50,7 @@ class LanguageManager {
     async loadExternalContent(lang) {
         try {
             // Load About section content
-            const aboutResponse = await fetch(`content/about-${lang}.txt`);
+            const aboutResponse = await fetch(`content/about-${lang}.txt`, { cache: 'no-store' });
             if (aboutResponse.ok) {
                 const text = await aboutResponse.text();
                 const paragraphs = text.split('\n\n');
@@ -71,7 +71,7 @@ class LanguageManager {
             for (const desc of projectDescriptions) {
                 const projectId = desc.getAttribute('data-project');
                 try {
-                    const projectResponse = await fetch(`content/${projectId}-${lang}.txt`);
+                    const projectResponse = await fetch(`content/${projectId}-${lang}.txt`, { cache: 'no-store' });
                     if (projectResponse.ok) {
                         const projectText = await projectResponse.text();
                         desc.textContent = projectText;
