@@ -75,7 +75,8 @@ class LanguageManager {
         }
 
         try {
-            const response = await fetch(`content/${projectId}.json`, { cache: 'no-store' });
+            const cacheBust = `v=${Date.now()}`;
+            const response = await fetch(`content/${projectId}.json?${cacheBust}`, { cache: 'no-store' });
             if (response.ok) {
                 const data = await response.json();
                 this.projectDataCache[projectId] = data;
@@ -116,7 +117,8 @@ class LanguageManager {
     async populateAboutSection(lang) {
         if (!this.aboutContent) {
             try {
-                const aboutResponse = await fetch('content/about.json', { cache: 'no-store' });
+                const cacheBust = `v=${Date.now()}`;
+                const aboutResponse = await fetch(`content/about.json?${cacheBust}`, { cache: 'no-store' });
                 if (aboutResponse.ok) {
                     this.aboutContent = await aboutResponse.json();
                 }
