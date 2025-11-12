@@ -111,6 +111,26 @@ class LanguageManager {
             if (descriptionElement && projectInfo.description?.[lang]) {
                 descriptionElement.textContent = projectInfo.description[lang];
             }
+
+            // Update overlay links if provided in JSON
+            const linkEn = projectInfo.link?.en || '';
+            const linkEs = projectInfo.link?.es || '';
+            const enAnchor = card.querySelector('.project-overlay .project-link.en-link');
+            const esAnchor = card.querySelector('.project-overlay .project-link.es-link');
+            const singleAnchor = card.querySelector('.project-overlay .project-link:not(.en-link):not(.es-link)');
+
+            if (enAnchor || esAnchor) {
+                if (enAnchor && (linkEn || linkEs)) {
+                    enAnchor.href = linkEn || linkEs;
+                }
+                if (esAnchor && (linkEs || linkEn)) {
+                    esAnchor.href = linkEs || linkEn;
+                }
+            } else if (singleAnchor) {
+                if (linkEn || linkEs) {
+                    singleAnchor.href = linkEn || linkEs;
+                }
+            }
         }
     }
 
