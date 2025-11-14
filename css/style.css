@@ -89,6 +89,8 @@ body {
     position: relative;
     padding: 0;
     transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .license-icon {
