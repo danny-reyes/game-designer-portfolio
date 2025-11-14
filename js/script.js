@@ -244,6 +244,34 @@ let navigationManager;
 document.addEventListener('DOMContentLoaded', () => {
     languageManager = new LanguageManager();
     navigationManager = new NavigationManager();
+    const navToggle = document.querySelector('.nav-toggle');
+    const navTabs = document.querySelectorAll('.nav-tab');
+
+    if (navToggle) {
+        const closeNav = () => {
+            document.body.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        };
+
+        navToggle.addEventListener('click', () => {
+            const isOpen = document.body.classList.toggle('nav-open');
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeNav();
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeNav();
+            }
+        });
+    }
 
     // Load preferred language
     const savedLang = localStorage.getItem('preferred-language') || 'en';
