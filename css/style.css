@@ -22,7 +22,7 @@ body {
     position: fixed;
     top: 2rem;
     right: 2rem;
-    z-index: 1000;
+    z-index: 1100;
     display: flex;
     gap: 0.5rem;
 }
@@ -97,13 +97,24 @@ body {
     font-weight: 600;
 }
 
-.license-button:hover {
+.license-button.license-open {
     background: #0a0a0a;
     border-color: rgba(255, 255, 255, 0.4);
 }
 
-.license-button:hover .license-icon {
+.license-button.license-open .license-icon {
     color: #ffffff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .license-button:hover {
+        background: #0a0a0a;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .license-button:hover .license-icon {
+        color: #ffffff;
+    }
 }
 
 .license-tooltip {
@@ -148,9 +159,8 @@ body {
     padding: 0;
 }
 
-.license-button:hover .license-tooltip,
-.license-button:focus-within .license-tooltip,
-.license-button.license-open .license-tooltip {
+.license-button.license-open .license-tooltip,
+.license-button:focus-within .license-tooltip {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, 0);

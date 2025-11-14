@@ -312,8 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // License tooltip toggle (for mobile and desktop click)
     if (licenseButton) {
         licenseButton.addEventListener('click', (e) => {
-            // If the click comes from the link inside the tooltip,
-            // let the anchor behave normally.
+            // If click comes from the link inside the tooltip, let it behave normally
             if (e.target.closest('.license-tooltip a')) {
                 return;
             }
@@ -325,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Close tooltip when clicking anywhere outside
+        // Close tooltip when clicking anywhere outside the button
         document.addEventListener('click', (e) => {
             if (!licenseButton.contains(e.target)) {
                 licenseButton.classList.remove('license-open');
