@@ -197,6 +197,14 @@ body {
     font-weight: 400;
 }
 
+.section-indicator {
+    display: none;
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+}
+
 /* Horizontal Navigation */
 .horizontal-nav {
     text-align: center;
@@ -695,6 +703,11 @@ html {
 
     .header-content .subtitle {
         font-size: 0.9rem;
+    }
+
+    .section-indicator {
+        display: block;
+        font-size: 0.8rem;
     }
 
     .language-toggle {

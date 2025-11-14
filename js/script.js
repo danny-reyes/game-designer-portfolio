@@ -58,6 +58,11 @@ class LanguageManager {
 
         // Store preference
         localStorage.setItem('preferred-language', lang);
+
+        // Update section indicator (mobile subtitle)
+        if (window.navigationManager && typeof window.navigationManager.updateSectionIndicator === 'function') {
+            window.navigationManager.updateSectionIndicator();
+        }
     }
 
     async loadExternalContent(lang) {
@@ -224,6 +229,19 @@ class NavigationManager {
 
             // Update URL hash
             history.replaceState(null, null, `#${sectionId}`);
+
+            // Update section indicator
+            this.updateSectionIndicator();
+        }
+    }
+
+    updateSectionIndicator() {
+        const indicator = document.querySelector('.section-indicator');
+        if (!indicator) return;
+
+        const activeTab = document.querySelector('.nav-tab.active');
+        if (activeTab) {
+            indicator.textContent = activeTab.textContent.trim();
         }
     }
 
