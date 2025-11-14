@@ -110,6 +110,7 @@ body {
     position: absolute;
     left: 50%;
     top: 115%;
+    bottom: auto;
     min-width: 200px;
     max-width: 260px;
     background: rgba(10, 10, 10, 0.98);
@@ -148,7 +149,8 @@ body {
 }
 
 .license-button:hover .license-tooltip,
-.license-button:focus-within .license-tooltip {
+.license-button:focus-within .license-tooltip,
+.license-button.license-open .license-tooltip {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, 0);
@@ -672,10 +674,6 @@ html {
         left: 1.25rem;
     }
 
-    body.nav-open {
-        overflow: hidden;
-    }
-
     .horizontal-nav {
         display: none;
         position: fixed;
@@ -683,7 +681,7 @@ html {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(10, 10, 10, 0.97);
+        background: #000000;
         padding-top: 120px;
         text-align: left;
         padding-left: 2.5rem;
@@ -695,6 +693,7 @@ html {
 
     .main-header {
         padding: 1rem 0 0 0;
+        z-index: 1001;
     }
 
     .header-content h1 {
@@ -800,9 +799,26 @@ html {
     }
 
     .license-tooltip {
-        top: 120%;
+        bottom: 120%;
+        top: auto;
         max-width: 230px;
         font-size: 0.7rem;
+        transform: translate(-50%, -8px);
+    }
+
+    body.nav-open {
+        overflow: hidden;
+    }
+
+    body.nav-open::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #000000;
+        z-index: 900;
     }
 }
 

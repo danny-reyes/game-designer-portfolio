@@ -1,3 +1,18 @@
+// Handle hash without browser auto-scroll: capture initial hash and remove it.
+const INITIAL_HASH = window.location.hash || '';
+if (INITIAL_HASH) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+
+// Prevent the browser from restoring an old scroll position
+if ('scrollRestoration' in history) {
+    try {
+        history.scrollRestoration = 'manual';
+    } catch (e) {
+        // ignore
+    }
+}
+
 // Language switching functionality
 const ABOUT_FALLBACK = {
     en: [
@@ -262,8 +277,11 @@ let navigationManager;
 document.addEventListener('DOMContentLoaded', () => {
     languageManager = new LanguageManager();
     navigationManager = new NavigationManager();
+    // Expose navigation manager so LanguageManager can update the mobile subtitle
+    window.navigationManager = navigationManager;
     const navToggle = document.querySelector('.nav-toggle');
     const navTabs = document.querySelectorAll('.nav-tab');
+    const licenseButton = document.querySelector('.license-button');
 
     if (navToggle) {
         const closeNav = () => {
@@ -287,6 +305,30 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
                 closeNav();
+            }
+        });
+    }
+
+    // License tooltip toggle (for mobile and desktop click)
+    if (licenseButton) {
+        licenseButton.addEventListener('click', (e) => {
+            // If the click comes from the link inside the tooltip,
+            // let the anchor behave normally.
+            if (e.target.closest('.license-tooltip a')) {
+                return;
+            }
+
+            e.preventDefault();
+            const isOpen = licenseButton.classList.toggle('license-open');
+            if (!isOpen) {
+                licenseButton.blur();
+            }
+        });
+
+        // Close tooltip when clicking anywhere outside
+        document.addEventListener('click', (e) => {
+            if (!licenseButton.contains(e.target)) {
+                licenseButton.classList.remove('license-open');
             }
         });
     }
@@ -322,17 +364,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle hash navigation
-    if (window.location.hash) {
-        const sectionId = window.location.hash.substring(1);
-        setTimeout(() => {
-            navigationManager.switchToSection(sectionId);
-        }, 100);
-    }
+    // No hash navigation here; it is handled on window.load using INITIAL_HASH
 });
 
 // Add loading state
 window.addEventListener('load', () => {
+    // Ensure we start at the very top on first paint
+    window.scrollTo(0, 0);
+    // And once more after any late layout shifts
+    setTimeout(() => window.scrollTo(0, 0), 80);
+
     document.body.classList.add('fully-loaded');
     
     // Trigger animations for visible elements
@@ -342,6 +383,19 @@ window.addEventListener('load', () => {
             el.classList.add('fade-in');
         }, index * 100);
     });
+
+    // After layout is stable, if there was an initial hash, navigate to that tab
+    if (navigationManager && typeof navigationManager.switchToSection === 'function') {
+        if (INITIAL_HASH) {
+            const sectionId = INITIAL_HASH.substring(1);
+            setTimeout(() => {
+                navigationManager.switchToSection(sectionId);
+                history.replaceState(null, null, `#${sectionId}`);
+            }, 60);
+        } else {
+            navigationManager.switchToSection('interactive-fictions');
+        }
+    }
 });
 
 // Fiverr icon hover functionality
