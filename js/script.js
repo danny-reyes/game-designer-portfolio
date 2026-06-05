@@ -132,6 +132,54 @@ class LanguageManager {
                 descriptionElement.textContent = projectInfo.description[lang];
             }
 
+            // Collab-specific fields
+            const studioElement = card.querySelector('.project-studio');
+            const roleElement = card.querySelector('.project-role');
+            if (studioElement) {
+                if (projectInfo.studio?.[lang]) {
+                    studioElement.textContent = projectInfo.studio[lang];
+                } else {
+                    studioElement.style.display = 'none';
+                }
+            }
+            if (roleElement) {
+                if (projectInfo.role?.[lang]) {
+                    roleElement.textContent = projectInfo.role[lang];
+                } else {
+                    roleElement.style.display = 'none';
+                }
+            }
+
+            // Collab trailer & download links
+            const trailerLink = card.querySelector('.collab-trailer-link');
+            const downloadLink = card.querySelector('.collab-download-link');
+            if (trailerLink) {
+                if (projectInfo.trailer && /^https?:\/\//i.test(projectInfo.trailer)) {
+                    trailerLink.href = projectInfo.trailer;
+                } else {
+                    trailerLink.style.display = 'none';
+                }
+            }
+            if (downloadLink) {
+                if (projectInfo.download && /^https?:\/\//i.test(projectInfo.download)) {
+                    downloadLink.href = projectInfo.download;
+                } else {
+                    downloadLink.style.display = 'none';
+                }
+                const labelSpan = downloadLink.querySelector('span');
+                if (labelSpan && projectInfo.download_label?.[lang]) {
+                    labelSpan.textContent = projectInfo.download_label[lang];
+                }
+            }
+            const websiteLink = card.querySelector('.collab-website-link');
+            if (websiteLink) {
+                if (projectInfo.website && /^https?:\/\//i.test(projectInfo.website)) {
+                    websiteLink.href = projectInfo.website;
+                } else {
+                    websiteLink.style.display = 'none';
+                }
+            }
+
             // Update overlay links if provided in JSON
             const linkEn = projectInfo.link?.en || '';
             const linkEs = projectInfo.link?.es || '';

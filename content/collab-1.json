@@ -1,0 +1,22 @@
+{
+  "title": {
+    "en": "Fatal: Unleashed Darkness",
+    "es": "Fatal: Unleashed Darkness"
+  },
+  "studio": {
+    "en": "Selene Games",
+    "es": "Selene Games"
+  },
+  "role": {
+    "en": "Lead Narrative Designer",
+    "es": "Lead Narrative Designer"
+  },
+  "description": {
+    "en": "A third-person narrative action survival horror set in Texas, 1974. Trapped inside the Amberhusk Motel — a place where something has altered both the environment and those within it — Nick must explore carefully, survive the unknown, and find a way out.\n\nCurrently in development. Demo coming soon.",
+    "es": "Un survival horror de acción narrativa en tercera persona ambientado en Texas, 1974. Atrapado en el Motel Amberhusk — un lugar donde algo ha alterado el entorno y a quienes permanecen en él — Nick debe explorar con cautela, sobrevivir lo desconocido y encontrar la salida.\n\nActualmente en desarrollo. Demo próximamente."
+  },
+  "trailer": "https://youtu.be/AJ6fIgG-TdQ",
+  "download": "https://store.steampowered.com/app/3679850/Fatal_Unleashed_Darkness/",
+  "download_label": {"en": "Wishlist", "es": "Wishlist"},
+  "website": "https://selenegames.com/games/fatal-unleashed-darkness"
+}
